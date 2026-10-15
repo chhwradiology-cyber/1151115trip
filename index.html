@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11/15 台中出遊行程與停車資訊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4f0; --card:#ffffff; --ink:#1d2a2e; --muted:#5d6b70; --line:#dcd8d0;
+  --accent:#b8382c; --accent-ink:#ffffff; --teal:#1f5560; --tint:#eaf1f2;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#141b1d; --card:#1c2629; --ink:#eceae5; --muted:#9aa8ac; --line:#2e3b3f;
+  --accent:#e0675a; --accent-ink:#1a0d0b; --teal:#7fc0cb; --tint:#22313a;}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.7;font-size:16px}
+a{color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px}
+header{background:var(--teal);color:#fff;padding:44px 0 36px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-60px;bottom:-90px;width:240px;height:240px;border-radius:50%;
+  background:var(--accent);opacity:.9}
+header .wrap{position:relative;z-index:1}
+header h1{font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;font-size:clamp(34px,9vw,52px);line-height:1.15;margin:0 0 10px}
+header p{margin:0;font-size:15px;opacity:.9}
+.summary{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.summary span{background:rgba(255,255,255,.14);padding:4px 12px;border-radius:99px;font-size:14px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px}
+nav a{flex:1;text-align:center;text-decoration:none;font-weight:500;font-size:15px;padding:7px 0;border-radius:8px;color:var(--teal);background:var(--tint)}
+nav a:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h2{font-family:"Noto Serif TC","Songti TC",serif;font-size:26px;margin:40px 0 6px}
+.lead{color:var(--muted);margin:0 0 18px;font-size:15px}
+.btn{display:inline-block;text-decoration:none;font-weight:700;font-size:15px;padding:9px 16px;border-radius:8px;
+  background:var(--accent);color:var(--accent-ink);border:0;cursor:pointer;font-family:inherit}
+.btn.alt{background:var(--tint);color:var(--teal)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.route-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.route-box b{color:var(--teal)}
+ol.stops{list-style:none;margin:0;padding:0;position:relative}
+ol.stops::before{content:"";position:absolute;left:11px;top:10px;bottom:10px;width:2px;background:var(--line)}
+ol.stops li{position:relative;padding-left:40px;margin-bottom:18px}
+ol.stops li::before{content:"";position:absolute;left:3px;top:20px;width:18px;height:18px;border-radius:50%;
+  background:var(--bg);border:5px solid var(--accent)}
+.stop{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.time{font-weight:700;color:var(--accent);font-size:15px}
+.stop h3{margin:2px 0 4px;font-size:21px}
+.addr{margin:0;color:var(--muted);font-size:15px}
+.note{margin:10px 0 0;font-size:14px;background:var(--tint);border-radius:8px;padding:8px 12px}
+.park{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.park h3{margin:0 0 4px;font-size:19px}
+.park .for{color:var(--muted);font-size:14px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);border-top:0;font-size:13px}
+td a{color:var(--teal);font-weight:700}
+.price{white-space:nowrap}
+footer{margin:44px 0 40px;color:var(--muted);font-size:13px;text-align:center}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:8px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#toast{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>11/15 台中出遊</h1>
+    <p>科內出遊行程路線與停車資訊</p>
+    <div class="summary"><span>共 4 個景點</span><span>10:00 出發遊覽</span><span>全程開車約 13 分鐘、4.7 公里</span></div>
+  </div>
+</header>
+<nav>
+  <div class="wrap"><a href="#route">行程路線</a><a href="#parking">停車資訊</a></div>
+</nav>
+
+<main class="wrap">
+  <section id="route">
+    <h2>行程路線</h2>
+    <p class="lead">依序前往 4 個景點，點「導航」會在 Google 地圖開啟。</p>
+    <div class="route-box">
+      <div>新市政公園 → 國家歌劇院 → 秋紅谷 → 裕元花園酒店</div>
+      <div style="color:var(--muted);font-size:14px;margin-top:4px">開車約 <b>13 分鐘</b>・<b>4.7 公里</b>，途經府會園道和市政北五路</div>
+      <div class="btns"><a class="btn" href="https://maps.app.goo.gl/t53gBk1mVsKys7NE8" target="_blank" rel="noopener">開啟完整路線</a></div>
+    </div>
+
+    <ol class="stops" style="margin-top:22px">
+      <li><div class="stop">
+        <div class="time">10:00–10:30</div>
+        <h3>台中新市政公園</h3>
+        <p class="addr">台中市西屯區惠中路一段 99 號</p>
+        <div class="btns">
+          <a class="btn" href="https://maps.app.goo.gl/duAcgr4W1G3ke9BR6" target="_blank" rel="noopener">導航</a>
+          <button class="btn alt" data-copy="台中市西屯區惠中路一段 99 號">複製地址</button>
+          <a class="btn alt" href="#p1">停車場</a>
+        </div>
+      </div></li>
+      <li><div class="stop">
+        <div class="time">10:30–11:00</div>
+        <h3>台中國家歌劇院</h3>
+        <p class="addr">台中市西屯區惠來路二段 101 號</p>
+        <div class="btns">
+          <a class="btn" href="https://maps.app.goo.gl/sptG5MqsKkfqdXyY7" target="_blank" rel="noopener">導航</a>
+          <button class="btn alt" data-copy="台中市西屯區惠來路二段 101 號">複製地址</button>
+          <a class="btn alt" href="#p2">停車場</a>
+        </div>
+      </div></li>
+      <li><div class="stop">
+        <div class="time">11:00–11:30</div>
+        <h3>秋紅谷景觀生態公園</h3>
+        <p class="addr">台中市西屯區朝富路 30 號</p>
+        <div class="btns">
+          <a class="btn" href="https://maps.app.goo.gl/G4EJbSdWSSYBMFJD7" target="_blank" rel="noopener">導航</a>
+          <button class="btn alt" data-copy="台中市西屯區朝富路 30 號">複製地址</button>
+          <a class="btn alt" href="#p3">停車場</a>
+        </div>
+      </div></li>
+      <li><div class="stop">
+        <div class="time">11:30–14:00</div>
+        <h3>台中裕元花園酒店（溫莎咖啡廳）</h3>
+        <p class="addr">臺中市西屯區福安里台灣大道四段 610 號 B1F</p>
+        <p class="note">自助餐餐廳，Google 地圖顯示每人約 $800–1,600。</p>
+        <div class="btns">
+          <a class="btn" href="https://maps.app.goo.gl/p147UHTyAJxRkALH6" target="_blank" rel="noopener">導航</a>
+          <button class="btn alt" data-copy="臺中市西屯區福安里台灣大道四段610號 B1F">複製地址</button>
+        </div>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="parking">
+    <h2>停車資訊</h2>
+    <p class="lead">以下為各景點附近的停車場與收費，實際費率以現場公告為準。</p>
+
+    <div class="park" id="p1">
+      <h3>新市政公園</h3>
+      <p class="for">對應行程：10:00–10:30</p>
+      <table>
+        <tr><th>停車場</th><th>收費</th></tr>
+        <tr><td><a href="https://maps.app.goo.gl/PiSxQBfYAdYcbC7G6" target="_blank" rel="noopener">市政公園停車場</a></td><td class="price">20 元／1 小時</td></tr>
+      </table>
+    </div>
+
+    <div class="park" id="p2">
+      <h3>國家歌劇院附近</h3>
+      <p class="for">對應行程：10:30–11:00，共 3 個停車場可選</p>
+      <table>
+        <tr><th>停車場</th><th>收費</th><th>當日最高</th></tr>
+        <tr><td><a href="https://maps.app.goo.gl/UYqAtpymrB54zKHYA" target="_blank" rel="noopener">惠順營業場</a></td><td class="price">15 元／半小時</td><td class="price">360 元</td></tr>
+        <tr><td><a href="https://maps.app.goo.gl/o5F5kUQeHTFiFiPm9" target="_blank" rel="noopener">惠安停車場</a></td><td class="price">20 元／半小時</td><td class="price">280 元</td></tr>
+        <tr><td><a href="https://maps.app.goo.gl/pRjoWQmXrmdKJ9Ud6" target="_blank" rel="noopener">惠新停車場</a></td><td class="price">15 元／半小時</td><td class="price">280 元</td></tr>
+      </table>
+    </div>
+
+    <div class="park" id="p3">
+      <h3>秋紅谷附近</h3>
+      <p class="for">對應行程：11:00–11:30</p>
+      <table>
+        <tr><th>停車場</th><th>收費</th></tr>
+        <tr><td><a href="https://maps.app.goo.gl/jZQm1WFJNLwvUXRH8" target="_blank" rel="noopener">城市車旅停車場秋紅谷 A</a></td><td class="price">10 元／半小時</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer>11/15 台中出遊行程資訊</footer>
+</main>
+
+<div id="toast" role="status" aria-live="polite">已複製地址</div>
+<script>
+(function(){
+  var t=document.getElementById('toast'),timer;
+  function show(m){t.textContent=m;t.classList.add('on');clearTimeout(timer);timer=setTimeout(function(){t.classList.remove('on')},1600)}
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-copy]');if(!b)return;
+    var text=b.getAttribute('data-copy');
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){show('已複製地址')},function(){show('複製失敗，請手動選取')});
+    }else{
+      var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');show('已複製地址')}catch(x){show('複製失敗，請手動選取')}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+</body>
+</html>
