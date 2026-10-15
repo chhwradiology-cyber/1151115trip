@@ -30,6 +30,8 @@ header h1{font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;font-siz
 header p{margin:0;font-size:15px;opacity:.9}
 .summary{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .summary span{background:rgba(255,255,255,.14);padding:4px 12px;border-radius:99px;font-size:14px}
+.status{margin:20px 0 0;padding:10px 14px;background:rgba(255,255,255,.14);border-left:4px solid #fff;font-weight:500;font-size:15px}
+.status[hidden]{display:none}
 nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px}
 nav a{flex:1;text-align:center;text-decoration:none;font-weight:500;font-size:15px;padding:7px 0;border-radius:8px;color:var(--teal);background:var(--tint)}
@@ -72,6 +74,7 @@ footer{margin:44px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   <div class="wrap">
     <h1>11/15 台中出遊</h1>
     <p>康樂雙張再次感謝您的參與</p>
+    <p class="status" id="status" hidden></p>
   </div>
 </header>
 <nav>
@@ -81,6 +84,7 @@ footer{margin:44px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 <main class="wrap">
   <section id="route">
     <h2>行程路線</h2>
+    <p class="lead">依序前往 4 個景點，點「導航」會在 Google 地圖開啟。</p>
     <div class="route-box">
       <div>新市政公園 → 國家歌劇院 → 秋紅谷 → 裕元花園酒店</div>
       <div class="btns"><a class="btn" href="https://maps.app.goo.gl/t53gBk1mVsKys7NE8" target="_blank" rel="noopener">開啟完整路線</a></div>
@@ -121,7 +125,7 @@ footer{margin:44px 0 40px;color:var(--muted);font-size:13px;text-align:center}
         <div class="time">11:30–14:00</div>
         <h3>台中裕元花園酒店（溫莎咖啡廳）</h3>
         <p class="addr">臺中市西屯區福安里台灣大道四段 610 號 B1F</p>
-        <p class="note"></p>
+        <p class="note">自助餐餐廳，Google 地圖顯示每人約 $800–1,600。</p>
         <div class="btns">
           <a class="btn" href="https://maps.app.goo.gl/p147UHTyAJxRkALH6" target="_blank" rel="noopener">導航</a>
           <button class="btn alt" data-copy="臺中市西屯區福安里台灣大道四段610號 B1F">複製地址</button>
@@ -183,6 +187,41 @@ footer{margin:44px 0 40px;color:var(--muted);font-size:13px;text-align:center}
       document.body.removeChild(ta);
     }
   });
+
+  /* ---------- 出遊倒數 ---------- */
+  // 出遊日期:若要修改日期,只需改這一行 (年-月-日)
+  var TRIP_DATE = "2026-11-15";
+  var START_MIN = 10 * 60, END_MIN = 14 * 60;
+
+  function taipeiNow() {
+    var parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Taipei", hour12: false,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit"
+    }).formatToParts(new Date());
+    var o = {};
+    parts.forEach(function (p) { o[p.type] = p.value; });
+    return { date: o.year + "-" + o.month + "-" + o.day,
+             minutes: (parseInt(o.hour, 10) % 24) * 60 + parseInt(o.minute, 10) };
+  }
+  function dayNum(s) { var a = s.split("-"); return Date.UTC(+a[0], +a[1] - 1, +a[2]) / 86400000; }
+
+  var statusEl = document.getElementById("status");
+  var now = taipeiNow();
+  var diff = dayNum(TRIP_DATE) - dayNum(now.date);
+  function show(msg) { statusEl.textContent = msg; statusEl.hidden = false; }
+
+  if (diff > 1) {
+    show("距離出遊還有 " + diff + " 天");
+  } else if (diff === 1) {
+    show("明天出發,10:00 第一站新市政公園");
+  } else if (diff === 0) {
+    if (now.minutes < START_MIN) show("今天出遊,10:00 第一站新市政公園");
+    else if (now.minutes >= END_MIN) show("今天的行程已結束,路上小心");
+    else show("今天出遊中,祝大家玩得愉快");
+  } else {
+    show("這次出遊已結束");
+  }
 })();
 </script>
 </body>
